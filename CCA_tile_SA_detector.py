@@ -5,7 +5,7 @@ import imutils
 import cv2
 import numpy as np
 
-im_path = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/tile_images/green_tile_1_no_bkgd.png'
+im_path = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/dev_test_images/green_tile_1_no_bkgd.png'
 image = cv2.imread(im_path)
 image = cv2.resize(image, (0, 0), fx = 0.5, fy = 0.5)
 
