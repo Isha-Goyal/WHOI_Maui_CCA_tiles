@@ -11,12 +11,15 @@ import os
 import csv
 
 # Iterate through images in folder
-directory = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/maui CCA tile photos/Tile_Left'
+directory = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/maui CCA tile photos/Tile_Right'
 
-with open('surface_areas_left_1.csv', 'w', newline='') as file:
+with open('surface_areas_right_2.csv', 'w', newline='') as file:
     csvwriter = csv.writer(file)
 
-    for filename in os.listdir(directory):
+    parent_list = os.listdir(directory)
+    parent_list.sort()
+
+    for filename in parent_list:
         f = os.path.join(directory, filename)
     
         # Input and output paths for background removal 
@@ -62,8 +65,8 @@ with open('surface_areas_left_1.csv', 'w', newline='') as file:
                 big.append(i)
 
 
-        # Find and assume rightmost contour in image is reference (should be a circle of known size)
-        ref_cont = contours[big[0]] # note: change this line if the relative position of the reference within the image changes
+        # Find and assume center contour in image is reference (should be a circle of known size)
+        ref_cont = contours[big[1]] # note: change this line if the relative position of the reference within the image changes
         ref_area_pixels = cv2.contourArea(ref_cont)
         ref_diam_actual = 0.75 # diameter of penny in inches
         ref_area_actual = np.pi * np.square(ref_diam_actual/2)
@@ -73,8 +76,8 @@ with open('surface_areas_left_1.csv', 'w', newline='') as file:
         cnts = cv2.drawContours(image, ref_cont, -1, (0,0,255), 2)
 
 
-        # Identify and measure target contour (assuming it is second from right)
-        target_cont = contours[big[1]]
+        # Find and assume rightmost contour is target
+        target_cont = contours[big[0]]
         target_area_pixels = cv2.contourArea(target_cont)
         target_area_actual = target_area_pixels * ratio
 
