@@ -4,10 +4,10 @@ from rembg import remove
 from PIL import Image 
   
 # Store path of the image in the variable input_path 
-input_path =  '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/tile_images/green_tile_1.jpeg' 
+input_path =  '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/maui CCA tile photos/P6210549.JPG' 
   
 # Store path of the output image in the variable output_path 
-output_path = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/tile_images/green_tile_1_no_bkgd.png' 
+output_path = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/test_no_bkgd.png' 
   
 # Processing the image 
 input = Image.open(input_path) 

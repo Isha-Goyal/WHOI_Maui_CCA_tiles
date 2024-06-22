@@ -11,9 +11,9 @@ import os
 import csv
 
 # Iterate through images in folder
-directory = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/dev_test_images'
+directory = '/home/igoyal/WHOI/WHOI_Maui_CCA_tiles/maui CCA tile photos/Tile_Left'
 
-with open('surface_areas.csv', 'w', newline='') as file:
+with open('surface_areas_left_1.csv', 'w', newline='') as file:
     csvwriter = csv.writer(file)
 
     for filename in os.listdir(directory):
@@ -33,16 +33,19 @@ with open('surface_areas.csv', 'w', newline='') as file:
 
         # read and format image to get edges
         image = cv2.imread(output_path)
-        image = cv2.resize(image, (0, 0), fx = 0.5, fy = 0.5)
+        image = cv2.resize(image, (0, 0), fx = 0.3, fy = 0.3)
 
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         edged = cv2.Canny(gray, 1, 200)
         edged = cv2.dilate(edged, None, iterations=1)
         edged = cv2.erode(edged, None, iterations=1)
 
-
+        # Find all contours in image
         contours, hierarchy = cv2.findContours(edged,  
             cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
+        
+        # Sort the contours from rightmost to leftmost
+        contours = sorted(contours, key=lambda c: c[0][0][0], reverse=True)
 
         # Additional possible displays
         # cv2.imshow('gray', gray) # display grayscale image
@@ -59,7 +62,7 @@ with open('surface_areas.csv', 'w', newline='') as file:
                 big.append(i)
 
 
-        # Find and assume bottom-most contour in image is reference (should be a circle of known size)
+        # Find and assume rightmost contour in image is reference (should be a circle of known size)
         ref_cont = contours[big[0]] # note: change this line if the relative position of the reference within the image changes
         ref_area_pixels = cv2.contourArea(ref_cont)
         ref_diam_actual = 0.75 # diameter of penny in inches
@@ -70,17 +73,17 @@ with open('surface_areas.csv', 'w', newline='') as file:
         cnts = cv2.drawContours(image, ref_cont, -1, (0,0,255), 2)
 
 
-        # Identify and measure target contour
+        # Identify and measure target contour (assuming it is second from right)
         target_cont = contours[big[1]]
         target_area_pixels = cv2.contourArea(target_cont)
         target_area_actual = target_area_pixels * ratio
 
         print('surface area of actual object: ' + str(target_area_actual))
 
-        cnts = cv2.drawContours(image, target_cont, -1, (255, 0, 0), 2)
-        cv2.imshow('Contours', cnts)
+        # cnts = cv2.drawContours(image, target_cont, -1, (255, 0, 0), 2)
+        # cv2.imshow('Contours', cnts)
 
-        csvwriter.writerow([filename, target_area_actual])
+        # Remove .jpg from file name and write the surface area to csv
+        csvwriter.writerow([filename[0:-4], target_area_actual])
 
-        cv2.waitKey(0)
         cv2.destroyAllWindows
